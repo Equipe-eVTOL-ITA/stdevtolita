@@ -1,0 +1,109 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "simulate",
+            "detail": "Launch Gazebo Simulation",
+            "type": "shell",
+            "command": "./tasks/simulate.sh ${input:sim_world}",
+            "problemMatcher": []
+        },
+        {
+            "label": "image bridge",
+            "type": "shell",
+            "command": "./tasks/image_bridge.sh",
+            "problemMatcher": [],
+            "detail": "Launch ros_gz_image bridge"
+        },
+        {
+            "label": "simulate & image bridge & agent",
+            "dependsOn": [
+                "simulate",
+                "image bridge",
+                "agent"
+            ],
+            "detail": "Launch simulation, gz-ro2 image bridge and uxrce-dds agent",
+            "problemMatcher": []
+        },
+        {
+            "label": "agent",
+            "detail": "Launch Micro XRCE Agent",
+            "type": "shell",
+            "command": "./tasks/agent.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "build",
+            "detail": "Build workspace (default)",
+            "type": "shell",
+            "command": "./tasks/build.sh ${input:buildFolder}",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "submodules",
+            "detail": "Initialize and update git submodules",
+            "type": "shell",
+            "command": "./tasks/submodules.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "setup",
+            "detail": "Set up the workspace",
+            "type": "shell",
+            "command": "./tasks/setup.sh",
+            "problemMatcher": []
+        },
+        {
+            "label": "gazebo kill",
+            "type": "shell",
+            "command": "rm -rfv /tmp/px4* || true && pkill -9 px4 || true && pkill -9 -f 'gz sim' || true",
+            "presentation": {
+            "echo": true,
+            "reveal": "never",
+            "revealProblems": "onProblem",
+            "focus": false,
+            "panel": "dedicated",
+            "showReuseMessage": false,
+            "clear": false,
+            "close": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "mavlink-router",
+            "detail": "mavlink-router",
+            "type": "shell",
+            "command": "./tasks/mavlink_router.sh",
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id" : "sim_world",
+            "description": "Choose World to launch from",
+            "type": "pickString",
+            "options": [
+                "NOME_DO_MUNDO"
+            ],
+            "default": "sae1"
+        },
+        {
+            "id" : "buildFolder",
+            "description": "Which targets to build?",
+            "type": "pickString",
+            "options": [
+                "all",
+                "dependencies",
+                "custom_msgs",
+                "NOME DO PACOTE"
+            ],
+            "default": "all"
+        }
+    ]
+}
